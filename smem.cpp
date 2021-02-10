@@ -31,10 +31,12 @@ bool process::update_process(LPCTSTR proc_name, DWORD access, bool inherit) {
     this->proc_info.pentry32.dwSize = sizeof(PROCESSENTRY32);
     HANDLE tl_snapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, NULL);
 
-    if (Process32First(tl_snapshot, &this->proc_info.pentry32))
-        while (Process32Next(tl_snapshot, &this->proc_info.pentry32))
+    if (Process32First(tl_snapshot, &this->proc_info.pentry32)) {
+        do
             if (!_tcscmp(this->proc_info.pentry32.szExeFile, proc_name))
                 break;
+        while (Process32Next(tl_snapshot, &this->proc_info.pentry32));
+    }
 
     CloseHandle(tl_snapshot);
 
@@ -73,7 +75,7 @@ bool process::update_process(HANDLE handle, DWORD pid) {
 }
 
 _proc_info process::get_proc_info() {
-	return this->proc_info;
+    return this->proc_info;
 }
 
 bool process::success() {
@@ -85,13 +87,15 @@ MODULEENTRY32 process::get_module(LPCTSTR module_name) {
     mentry32.dwSize = sizeof(MODULEENTRY32);
     HANDLE tl_snapshot = CreateToolhelp32Snapshot(TH32CS_SNAPMODULE, proc_info.pid);
 
-    if (Module32First(tl_snapshot, &mentry32))
-        while (Module32Next(tl_snapshot, &mentry32))
+    if (Module32First(tl_snapshot, &mentry32)) {
+        do
             if (!_tcscmp(mentry32.szModule, module_name))
                 break;
+        while (Module32Next(tl_snapshot, &mentry32));
+    }
 
     CloseHandle(tl_snapshot);
-    
+
     if (_tcscmp(module_name, mentry32.szModule))        // if module with respective name wasn't found
         memset(&mentry32, 0, sizeof(MODULEENTRY32));    // zero all structure
 

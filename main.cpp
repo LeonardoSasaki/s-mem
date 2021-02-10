@@ -11,8 +11,6 @@ int wmain(int argc, wchar_t* argv[]) {
 		mem->update_process(L"notepad.exe");
 	}
 	
-	Sleep(250); 		// otherwise "KERNEL32.DLL" could have not been loaded yet. for a proper way of doing this, read get_module function
-	
 	// this is just a pattern scan to a random existing sig just as a example
 	std::wcout << std::hex << mem->pattern_scan(mem->get_module(L"notepad.exe"), "\x76\x02\xB0\x01\x88\x43\x39\x66\x44\x39\x3F", "xxxxxxxxxxx");
 

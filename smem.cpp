@@ -19,6 +19,11 @@ process::process(HANDLE handle, DWORD pid) {
     update_process(handle, pid);
 }
 
+process::~process() {
+    if (this->proc_info.handle != INVALID_HANDLE_VALUE && this->proc_info.handle != NULL)
+        CloseHandle(this->proc_info.handle);
+}
+
 bool process::update_process(LPCTSTR proc_name, DWORD access, bool inherit) {
     if (this->proc_info.handle != INVALID_HANDLE_VALUE && this->proc_info.handle != NULL)
         CloseHandle(this->proc_info.handle);
@@ -65,11 +70,6 @@ bool process::update_process(HANDLE handle, DWORD pid) {
     this->proc_info.pid = pid == 0 ? GetProcessId(handle) : pid;    // pid param defaults to 0
 
     return this->proc_info.process_found = true;                    // assumes the user passed a valid handle
-}
-
-process::~process() {
-    if (this->proc_info.handle != INVALID_HANDLE_VALUE && this->proc_info.handle != NULL)
-        CloseHandle(this->proc_info.handle);
 }
 
 _proc_info process::get_proc_info() {

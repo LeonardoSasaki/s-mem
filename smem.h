@@ -3,9 +3,9 @@
 
 typedef struct _proc_info {
 	PROCESSENTRY32	pentry32;
-	HANDLE			handle;
-	DWORD			pid;
-	bool			process_found;
+	HANDLE		handle;
+	DWORD		pid;
+	bool		process_found;
 };
 
 class process {

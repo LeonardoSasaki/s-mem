@@ -13,6 +13,12 @@ process::process(DWORD pid, DWORD access, bool inherit) {
     update_process(pid, access, inherit);
 }
 
+process::process(HWND window, DWORD access, bool inherit) {
+    this->proc_info.handle = NULL;
+    this->proc_info.process_found = false;
+    update_process(window, access, inherit);
+}
+
 process::process(HANDLE handle, DWORD pid) {
     this->proc_info.handle = NULL;
     this->proc_info.process_found = false;
@@ -32,16 +38,16 @@ bool process::update_process(LPCTSTR proc_name, DWORD access, bool inherit) {
     HANDLE tl_snapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, NULL);
 
     if (Process32First(tl_snapshot, &this->proc_info.pentry32)) {
-        do
-            if (!_tcscmp(this->proc_info.pentry32.szExeFile, proc_name))
-                break;
-        while (Process32Next(tl_snapshot, &this->proc_info.pentry32));
+        while(true){
+            if (Process32Next(tl_snapshot, &this->proc_info.pentry32)){
+                if (!_tcscmp(this->proc_info.pentry32.szExeFile, proc_name))
+                    break;
+            }
+            else return this->proc_info.process_found = false;
+        }
     }
 
     CloseHandle(tl_snapshot);
-
-    if (_tcscmp(proc_name, this->proc_info.pentry32.szExeFile))  // if process with respective name wasn't found
-        return this->proc_info.process_found = false;
 
     this->proc_info.pid = this->proc_info.pentry32.th32ProcessID;
     this->proc_info.handle = OpenProcess(access, inherit, this->proc_info.pid);
@@ -64,6 +70,23 @@ bool process::update_process(DWORD pid, DWORD access, bool inherit) {
     return this->proc_info.process_found = true;
 }
 
+bool process::update_process(HWND window, DWORD access, bool inherit) {
+    if (window != INVALID_HANDLE_VALUE && window != NULL)
+        CloseHandle(this->proc_info.handle);
+
+    GetWindowThreadProcessId(window, &this->proc_info.pid);
+    
+    if(this->proc_info.pid == 0)
+        return this->proc_info.process_found = false;
+    
+    this->proc_info.handle = OpenProcess(access, inherit, this->proc_info.pid);
+
+    if(this->proc_info.handle == INVALID_HANDLE_VALUE  || this->proc_info.handle == NULL)
+        return this->proc_info.process_found = false;
+    
+    return this->proc_info.process_found = true;                    
+}
+
 bool process::update_process(HANDLE handle, DWORD pid) {
     if (this->proc_info.handle != INVALID_HANDLE_VALUE && this->proc_info.handle != NULL)
         CloseHandle(this->proc_info.handle);
@@ -72,6 +95,10 @@ bool process::update_process(HANDLE handle, DWORD pid) {
     this->proc_info.pid = pid == 0 ? GetProcessId(handle) : pid;    // pid param defaults to 0
 
     return this->proc_info.process_found = true;                    // assumes the user passed a valid handle
+}
+
+_proc_info process::get_proc_info() {
+    return this->proc_info;
 }
 
 _proc_info process::get_proc_info() {
@@ -88,16 +115,19 @@ MODULEENTRY32 process::get_module(LPCTSTR module_name) {
     HANDLE tl_snapshot = CreateToolhelp32Snapshot(TH32CS_SNAPMODULE, proc_info.pid);
 
     if (Module32First(tl_snapshot, &mentry32)) {
-        do
-            if (!_tcscmp(mentry32.szModule, module_name))
+        while(true){
+            if(Module32Next(tl_snapshot, &mentry32)){
+                if (!_tcscmp(mentry32.szModule, module_name))
+                    break;
+            }
+            else{                                            // if module list ended && module wasn't found,
+                memset(&mentry32, 0, sizeof(MODULEENTRY32)); // then zero all structure
                 break;
-        while (Module32Next(tl_snapshot, &mentry32));
+            }
+        }
     }
 
-    CloseHandle(tl_snapshot);
-
-    if (_tcscmp(module_name, mentry32.szModule))        // if module with respective name wasn't found
-        memset(&mentry32, 0, sizeof(MODULEENTRY32));    // zero all structure
+    CloseHandle(tl_snapshot); 
 
     return mentry32;
 }

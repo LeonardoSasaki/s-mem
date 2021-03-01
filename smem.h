@@ -16,11 +16,13 @@ public:
 
 	process(LPCTSTR proc_name, DWORD access = PROCESS_ALL_ACCESS, bool inherit = false);
 	process(DWORD pid, DWORD access = PROCESS_ALL_ACCESS, bool inherit = false);
+	process(HWND window, DWORD access = PROCESS_ALL_ACCESS, bool inherit = false);
 	process(HANDLE handle, DWORD pid = 0);
 	~process();
 	
 	bool update_process(LPCTSTR proc_name, DWORD access = PROCESS_ALL_ACCESS, bool inherit = false);
 	bool update_process(DWORD pid, DWORD access = PROCESS_ALL_ACCESS, bool inherit = false);
+	bool update_process(HWND window, DWORD access = PROCESS_ALL_ACCESS, bool inherit = false);
 	bool update_process(HANDLE handle, DWORD pid = 0);
 	bool success();
 	
@@ -42,5 +44,4 @@ public:
 	BOOL mem_dealloc(uintptr_t address, size_t size = 0, DWORD free_type = MEM_DECOMMIT);
 
 	uintptr_t pattern_scan(MODULEENTRY32 module_entry, const char* sig, const char* mask);
-	
 };

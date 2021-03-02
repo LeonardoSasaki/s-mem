@@ -105,10 +105,6 @@ _proc_info process::get_proc_info() {
     return this->proc_info;
 }
 
-bool process::success() {
-    return this->proc_info.process_found;
-}
-
 MODULEENTRY32 process::get_module(LPCTSTR module_name) {
     MODULEENTRY32 mentry32;
     mentry32.dwSize = sizeof(MODULEENTRY32);

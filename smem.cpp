@@ -101,8 +101,8 @@ _proc_info process::get_proc_info() {
     return this->proc_info;
 }
 
-_proc_info process::get_proc_info() {
-    return this->proc_info;
+bool process::success() {
+    return this->proc_info.process_found;
 }
 
 MODULEENTRY32 process::get_module(LPCTSTR module_name) {

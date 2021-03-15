@@ -1,6 +1,6 @@
 Simple external process memory manipulation class for cheat &amp; malware dev
 
-<details><summary><h2>🌐 EN-US</h2></summary>
+<details><summary>🌐 EN-US</summary>
 <h2> s-mem </h2><p>
 A minimalistic open source class for memory manipulation using WinAPI for both malware and cheat dev. Note that this is not a magic solution agaisn't antivirus / anticheats, since handle creation can be blocked and WPM/RPM can be monitored. </p>
 
@@ -17,7 +17,7 @@ This class supports:
   
 #### ***Side note: i do not support cheating in multiplayer games, do not expect being magically undetected using this class. This is just a lightweight minimal implementation of WinAPI for external memory manipulation.*** </details>
 
-<details><summary><h2>🌐 PT-BR</h2></summary>
+<details><summary>🌐 PT-BR</summary>
 <h2> s-mem </h2><p>
 Uma classe minimalística de código aberto para manipulação de memória utilizando a WinAPI para criação de malware & cheats. Note que isto não é uma solução mágica contra antivírus / anticheats, visto que criação de handles podem ser bloqueadas e WPM/RPM monitoradas.</p
 
